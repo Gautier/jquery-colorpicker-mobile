@@ -129,43 +129,61 @@
             return false;
         },
         downHue = function(ev) {
+            // prevent android from highlighting the hue selector on click
+            ev.preventDefault();
             var current = {
                 cal: $(this).parent(),
                 y: $(this).offset().top
             };
             current.preview = current.cal.data('colorpicker').livePreview;
-            $(document).bind('mouseup', current, upHue);
-            $(document).bind('mousemove', current, moveHue);
+            $(document).bind('mouseup touchend', current, upHue);
+            $(document).bind('mousemove touchmove', current, moveHue);
         },
         moveHue = function(ev) {
-            change.apply(ev.data.cal.data('colorpicker').fields.eq(4).val(parseInt(360 * (150 - Math.max(0, Math.min(150, (ev.pageY - ev.data.y)))) / 150, 10)).get(0), [ev.data.preview]);
+            var moveEvent = ev;
+
+            // mobile touch event!
+            if (typeof(event) !== "undefined" && event.touches) {
+                moveEvent = event.touches[0];
+            }
+
+            change.apply(ev.data.cal.data('colorpicker').fields.eq(4).val(parseInt(360 * (150 - Math.max(0, Math.min(150, moveEvent.pageY - ev.data.y))) / 150, 10)).get(0), [ev.data.preview]);
             return false;
         },
         upHue = function(ev) {
             fillRGBFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
             fillHexFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
-            $(document).unbind('mouseup', upHue);
-            $(document).unbind('mousemove', moveHue);
+            $(document).unbind('mouseup touchend', upHue);
+            $(document).unbind('mousemove touchmove', moveHue);
             return false;
         },
         downSelector = function(ev) {
+            // prevent android from highlighting the selector on click
+            ev.preventDefault();
             var current = {
                 cal: $(this).parent(),
                 pos: $(this).offset()
                 };
             current.preview = current.cal.data('colorpicker').livePreview;
-            $(document).bind('mouseup', current, upSelector);
-            $(document).bind('mousemove', current, moveSelector);
+            $(document).bind('mouseup touchend', current, upSelector);
+            $(document).bind('mousemove touchmove', current, moveSelector);
         },
         moveSelector = function(ev) {
-            change.apply(ev.data.cal.data('colorpicker').fields.eq(6).val(parseInt(100 * (150 - Math.max(0, Math.min(150, (ev.pageY - ev.data.pos.top)))) / 150, 10)).end().eq(5).val(parseInt(100 * (Math.max(0, Math.min(150, (ev.pageX - ev.data.pos.left)))) / 150, 10)).get(0), [ev.data.preview]);
+            var moveEvent = ev;
+
+            // mobile touch event!
+            if (typeof(event) !== "undefined" && event.touches) {
+                moveEvent = event.touches[0];
+            }
+
+            change.apply(ev.data.cal.data('colorpicker').fields.eq(6).val(parseInt(100 * (150 - Math.max(0, Math.min(150, (moveEvent.pageY - ev.data.pos.top)))) / 150, 10)).end().eq(5).val(parseInt(100 * (Math.max(0, Math.min(150, (moveEvent.pageX - ev.data.pos.left)))) / 150, 10)).get(0), [ev.data.preview]);
             return false;
         },
         upSelector = function(ev) {
             fillRGBFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
             fillHexFields(ev.data.cal.data('colorpicker').color, ev.data.cal.get(0));
-            $(document).unbind('mouseup', upSelector);
-            $(document).unbind('mousemove', moveSelector);
+            $(document).unbind('mouseup touchend', upSelector);
+            $(document).unbind('mousemove touchmove', moveSelector);
             return false;
         },
         enterSubmit = function(ev) {
@@ -407,16 +425,16 @@
                             cal.appendTo(document.body);
                         }
                         options.fields = cal.find('input').bind('keyup', keyDown).bind('change', change).bind('blur', blur).bind('focus', focus);
-                        cal.find('span').bind('mousedown', downIncrement).end().find('>div.colorpicker_current_color').bind('click', restoreOriginal);
-                        options.selector = cal.find('div.colorpicker_color').bind('mousedown', downSelector);
+                        cal.find('span').bind('mousedown touchstart', downIncrement).end().find('>div.colorpicker_current_color').bind('click', restoreOriginal);
+                        options.selector = cal.find('div.colorpicker_color').bind('touchstart mousedown', downSelector);
                         options.selectorIndic = options.selector.find('div div');
                         options.el = this;
                         options.hue = cal.find('div.colorpicker_hue div');
-                        cal.find('div.colorpicker_hue').bind('mousedown', downHue);
+                        cal.find('div.colorpicker_hue').bind('mousedown touchstart', downHue);
                         options.newColor = cal.find('div.colorpicker_new_color');
                         options.currentColor = cal.find('div.colorpicker_current_color');
                         cal.data('colorpicker', options);
-                        cal.find('div.colorpicker_submit').bind('mouseenter', enterSubmit).bind('mouseleave', leaveSubmit).bind('click', clickSubmit);
+                        cal.find('div.colorpicker_submit').bind('mouseenter touchstart', enterSubmit).bind('mouseleave touchend', leaveSubmit).bind('click', clickSubmit);
                         fillRGBFields(options.color, cal.get(0));
                         fillHSBFields(options.color, cal.get(0));
                         fillHexFields(options.color, cal.get(0));
