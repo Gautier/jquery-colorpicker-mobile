@@ -2,9 +2,9 @@
  *
  * Color picker
  * Author: Stefan Petre www.eyecon.ro
- * 
+ *
  * Dual licensed under the MIT and GPL licenses
- * 
+ *
  */
  (function($) {
     var ColorPicker = function() {
@@ -261,9 +261,9 @@
         },
         fixHSB = function(hsb) {
             return {
-                h: Math.min(360, Math.max(0, hsb.h)),
-                s: Math.min(100, Math.max(0, hsb.s)),
-                b: Math.min(100, Math.max(0, hsb.b))
+                h: Math.round( Math.min(360, Math.max(0, hsb.h)) ),
+                s: Math.round( Math.min(100, Math.max(0, hsb.s)) ),
+                b: Math.round( Math.min(100, Math.max(0, hsb.b)) )
                 };
         },
         fixRGB = function(rgb) {
@@ -326,6 +326,10 @@
             }
             hsb.s *= 100 / 255;
             hsb.b *= 100 / 255;
+
+            hsb.h = Math.round ( hsb.h );
+            hsb.s = Math.round ( hsb.s );
+            hsb.b = Math.round ( hsb.b );
             return hsb;
         },
         HSBToRGB = function(hsb) {
