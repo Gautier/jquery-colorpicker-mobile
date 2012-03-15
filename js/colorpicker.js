@@ -2,9 +2,9 @@
  *
  * Color picker
  * Author: Stefan Petre www.eyecon.ro
- * 
+ *
  * Dual licensed under the MIT and GPL licenses
- * 
+ *
  */
  (function($) {
     var ColorPicker = function() {
@@ -199,6 +199,18 @@
             setCurrentColor(col, cal.get(0));
             cal.data('colorpicker').onSubmit(col, HSBToHex(col), HSBToRGB(col), cal.data('colorpicker').el);
         },
+        toggle = function(ev) {
+          var $body = $('body'),
+              current = $body.data('colorpickerId'),
+              me = $(this).data('colorpickerId');
+          if ( current && current === me ) {
+            $(document).trigger('mousedown');
+            $body.data('colorpickerId', null );
+          } else {
+            show.call(this, ev);
+            $body.data('colorpickerId', me );
+          }
+        },
         show = function(ev) {
             var cal = $('#' + $(this).data('colorpickerId'));
             cal.data('colorpicker').onBeforeShow.apply(this, [cal.get(0)]);
@@ -210,7 +222,7 @@
                 top -= this.offsetHeight + 176;
             }
             if (left + 356 > viewPort.l + viewPort.w) {
-                left -= 356;
+                left = Math.max(0, left - 356);
             }
             cal.css({
                 left: left + 'px',
@@ -261,9 +273,9 @@
         },
         fixHSB = function(hsb) {
             return {
-                h: Math.min(360, Math.max(0, hsb.h)),
-                s: Math.min(100, Math.max(0, hsb.s)),
-                b: Math.min(100, Math.max(0, hsb.b))
+                h: Math.round( Math.min(360, Math.max(0, hsb.h)) ),
+                s: Math.round( Math.min(100, Math.max(0, hsb.s)) ),
+                b: Math.round( Math.min(100, Math.max(0, hsb.b)) )
                 };
         },
         fixRGB = function(rgb) {
@@ -326,6 +338,10 @@
             }
             hsb.s *= 100 / 255;
             hsb.b *= 100 / 255;
+
+            hsb.h = Math.round ( hsb.h );
+            hsb.s = Math.round ( hsb.s );
+            hsb.b = Math.round ( hsb.b );
             return hsb;
         },
         HSBToRGB = function(hsb) {
@@ -448,7 +464,7 @@
                                 display: 'block'
                             });
                         } else {
-                            $(this).bind(options.eventName, show);
+                            $(this).bind(options.eventName, toggle);
                         }
                     }
                 });
