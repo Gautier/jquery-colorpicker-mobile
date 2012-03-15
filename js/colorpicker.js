@@ -199,6 +199,18 @@
             setCurrentColor(col, cal.get(0));
             cal.data('colorpicker').onSubmit(col, HSBToHex(col), HSBToRGB(col), cal.data('colorpicker').el);
         },
+        toggle = function(ev) {
+          var $body = $('body'),
+              current = $body.data('colorpickerId'),
+              me = $(this).data('colorpickerId');
+          if ( current && current === me ) {
+            $(document).trigger('mousedown');
+            $body.data('colorpickerId', null );
+          } else {
+            show.call(this, ev);
+            $body.data('colorpickerId', me );
+          }
+        },
         show = function(ev) {
             var cal = $('#' + $(this).data('colorpickerId'));
             cal.data('colorpicker').onBeforeShow.apply(this, [cal.get(0)]);
@@ -452,7 +464,7 @@
                                 display: 'block'
                             });
                         } else {
-                            $(this).bind(options.eventName, show);
+                            $(this).bind(options.eventName, toggle);
                         }
                     }
                 });
