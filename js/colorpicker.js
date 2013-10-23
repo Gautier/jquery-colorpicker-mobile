@@ -131,6 +131,12 @@
         downHue = function(ev) {
             // prevent android from highlighting the hue selector on click
             ev.preventDefault();
+
+            var moveEvent = ev;
+            if (typeof(event) !== "undefined" && event.touches) {
+                moveEvent = event.touches[0];
+            }
+
             var current = {
                 cal: $(this).parent(),
                 y: $(this).offset().top
@@ -138,6 +144,12 @@
             current.preview = current.cal.data('colorpicker').livePreview;
             $(document).bind('mouseup touchend', current, upHue);
             $(document).bind('mousemove touchmove', current, moveHue);
+
+            changeHue(moveEvent, current, current.preview);
+            return false;
+        },
+        changeHue = function(ev, data,  preview) {
+            change.apply(data.cal.data('colorpicker').fields.eq(4).val(parseInt(360 * (150 - Math.max(0, Math.min(150, ev.pageY - data.y))) / 150, 10)).get(0), [preview]);
         },
         moveHue = function(ev) {
             var moveEvent = ev;
@@ -146,8 +158,7 @@
             if (typeof(event) !== "undefined" && event.touches) {
                 moveEvent = event.touches[0];
             }
-
-            change.apply(ev.data.cal.data('colorpicker').fields.eq(4).val(parseInt(360 * (150 - Math.max(0, Math.min(150, moveEvent.pageY - ev.data.y))) / 150, 10)).get(0), [ev.data.preview]);
+            changeHue(moveEvent, ev.data, ev.data.preview);
             return false;
         },
         upHue = function(ev) {
@@ -167,6 +178,10 @@
             current.preview = current.cal.data('colorpicker').livePreview;
             $(document).bind('mouseup touchend', current, upSelector);
             $(document).bind('mousemove touchmove', current, moveSelector);
+
+            $(".colorpicker_color", current.cal).one('click', current, moveSelector);
+            ev.data = current;
+            moveSelector(ev);
         },
         moveSelector = function(ev) {
             var moveEvent = ev;
