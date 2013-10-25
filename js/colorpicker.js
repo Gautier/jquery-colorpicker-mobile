@@ -448,7 +448,7 @@
                     if (!$(this).data('colorpickerId')) {
                         var options = $.extend({}, opt);
                         options.origColor = opt.color;
-                        var id = 'colorpicker_' + parseInt(Math.random() * 1000);
+                        var id = 'colorpicker_' + (el.attr('id') || parseInt(Math.random() * 1000));
                         $(this).data('colorpickerId', id);
                         var cal = $(tpl).attr('id', id);
                         if (options.flat) {
