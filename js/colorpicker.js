@@ -256,7 +256,9 @@
                 if (ev.data.cal.data('colorpicker').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
                     ev.data.cal.hide();
                 }
-		if(!isChildOf($(ev.data.cal[0]).data("colorpicker")["el"], ev.target)) $('body').data('colorpickerId', null );
+                if (!isChildOf($(ev.data.cal[0]).data("colorpicker")["el"], ev.target)) {
+                    $('body').data('colorpickerId', null);
+                }
                 $(document).unbind('mousedown', hide);
             }
         },
